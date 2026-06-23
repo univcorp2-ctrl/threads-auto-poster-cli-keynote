@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "threads-auto-poster-cli"
+version = "0.1.0"
+description = "Safe dry-run-first CLI and GitHub Actions automation for Threads API posting."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "AI Development Agent" }]
+dependencies = [
+  "python-dotenv>=1.0.1",
+  "requests>=2.32.0",
+  "python-pptx>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2.0",
+  "ruff>=0.5.0",
+]
+
+[project.scripts]
+threads-auto-poster = "threads_auto_poster.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
