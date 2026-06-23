@@ -1,0 +1,6 @@
+{
+  "posts": [
+    {"text": "JSON投稿サンプル1: dry-runで安全に検証します。"},
+    {"text": "JSON投稿サンプル2: --execute時だけThreads APIへ送信します。"}
+  ]
+}
