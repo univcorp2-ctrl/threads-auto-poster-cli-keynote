@@ -1,0 +1,2 @@
+Threads自動投稿CLIのdry-runサンプルです。実投稿は--executeを付けたときだけ行われます。
+AIエージェントはAPIを叩かず、投稿計画JSONとKeynote資料生成までを担当します。
