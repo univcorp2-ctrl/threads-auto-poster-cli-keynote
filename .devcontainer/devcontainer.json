@@ -1,0 +1,11 @@
+{
+  "name": "Threads Auto Poster CLI",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "charliermarsh.ruff", "github.vscode-github-actions"]
+    }
+  },
+  "postCreateCommand": "python -m pip install --upgrade pip && python -m pip install -e '.[dev]'",
+  "remoteEnv": {"THREADS_DRY_RUN": "true"}
+}
