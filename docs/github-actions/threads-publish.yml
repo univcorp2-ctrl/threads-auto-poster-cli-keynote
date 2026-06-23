@@ -1,0 +1,60 @@
+name: Threads Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        required: true
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+      post_text:
+        required: false
+        default: ""
+        type: string
+      posts_file:
+        required: false
+        default: "content/post_queue.txt"
+        type: string
+      confirm_publish:
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      THREADS_APP_ID: ${{ secrets.THREADS_APP_ID }}
+      THREADS_APP_SECRET: ${{ secrets.THREADS_APP_SECRET }}
+      THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+      THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+      INPUT_DRY_RUN: ${{ inputs.dry_run }}
+      INPUT_POST_TEXT: ${{ inputs.post_text }}
+      INPUT_POSTS_FILE: ${{ inputs.posts_file }}
+      INPUT_CONFIRM_PUBLISH: ${{ inputs.confirm_publish }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
+      - run: |
+          if [[ "${INPUT_DRY_RUN}" == "false" && "${INPUT_CONFIRM_PUBLISH}" != "PUBLISH" ]]; then
+            echo "Refusing to publish. Set confirm_publish=PUBLISH when dry_run=false."
+            exit 1
+          fi
+      - run: |
+          mkdir -p dist
+          ARGS=(publish --output dist/publish-result.json)
+          if [[ -n "${INPUT_POST_TEXT}" ]]; then ARGS+=(--text "${INPUT_POST_TEXT}"); else ARGS+=(--file "${INPUT_POSTS_FILE}"); fi
+          if [[ "${INPUT_DRY_RUN}" == "false" ]]; then ARGS+=(--execute); else ARGS+=(--dry-run); fi
+          threads-auto-poster "${ARGS[@]}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: publish-result
+          path: dist/publish-result.json
+          if-no-files-found: error
